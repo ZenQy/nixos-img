@@ -3,6 +3,11 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    secrets = {
+      # url = "/home/nixos/Documents/nixos-secrets";
+      url = "git+ssh://git@github.com/zenqy/nixos-secrets";
+      flake = false;
+    };
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -13,19 +18,21 @@
     {
       self,
       nixpkgs,
+      secrets,
       disko,
     }:
+    with builtins;
     let
-      vps = [
-        "natvps"
-        "alice"
-      ];
+      vps = map (n: substring 0 ((stringLength n) - 4) n) (attrNames (readDir ./vps));
 
-      nixos = builtins.listToAttrs (
+      nixos = listToAttrs (
         map (v: {
           name = v;
           value = nixpkgs.lib.nixosSystem {
             system = "x86_64-linux";
+            specialArgs = {
+              secrets = import (secrets + "/secrets.nix");
+            };
             modules = [
               disko.nixosModules.disko
               ./configuration.nix
@@ -40,7 +47,7 @@
         }) vps
       );
 
-      image = builtins.listToAttrs (
+      image = listToAttrs (
         map (v: {
           name = v;
           value = self.nixosConfigurations.${v}.config.system.build.diskoImages;
@@ -54,5 +61,3 @@
 
     };
 }
-
-# bash <(curl -L https://raw.githubusercontent.com/bin456789/reinstall/main/reinstall.sh) dd --password 123@@@ --img=https://claw.940940.xyz/main.raw
