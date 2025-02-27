@@ -38,9 +38,5 @@
     "audit=0"
     "net.ifnames=0"
   ];
-  boot.initrd.availableKernelModules = [
-    "virtio_pci"
-    "virtio_scsi"
-    "virtio_blk"
-  ];
+
 }

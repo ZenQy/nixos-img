@@ -23,41 +23,58 @@
     }:
     with builtins;
     let
-      vps = map (n: substring 0 ((stringLength n) - 4) n) (attrNames (readDir ./vps));
+      floder =
+        dir:
+        filter (v: v != null) (
+          attrValues (mapAttrs (k: v: if v == "directory" then k else null) (readDir dir))
+        );
+      hosts = concatMap (
+        dir:
+        map (subdir: {
+          category = dir;
+          name = subdir;
+        }) (floder ./hosts/${dir})
+      ) (floder ./hosts);
 
       nixos = listToAttrs (
-        map (v: {
-          name = v;
+        map (host: {
+          name = host.name;
           value = nixpkgs.lib.nixosSystem {
-            system = "x86_64-linux";
+            system = if host.category == "x86" then "x86_64-linux" else "aarch64-linux";
             specialArgs = {
               secrets = import (secrets + "/secrets.nix");
             };
             modules = [
               disko.nixosModules.disko
               ./configuration.nix
-              ./disko.nix
-              ./grow-partition.nix
-              ./vps/${v}.nix
+              # ./grow-partition.nix
+              ./hosts/${host.category}
+              ./hosts/${host.category}/${host.name}
               {
-                networking.hostName = v;
+                networking.hostName = host.name;
               }
             ];
           };
-        }) vps
+        }) hosts
       );
 
-      image = listToAttrs (
-        map (v: {
-          name = v;
-          value = self.nixosConfigurations.${v}.config.system.build.diskoImages;
-        }) vps
-      );
+      image =
+        hosts:
+        listToAttrs (
+          map (host: {
+            name = host.name;
+            value = self.nixosConfigurations.${host.name}.config.system.build.diskoImages;
+          }) hosts
+        );
     in
+
     {
 
       nixosConfigurations = nixos;
-      packages.x86_64-linux = image;
+      packages = {
+        x86_64-linux = image (filter (host: host.category == "x86") hosts);
+        aarch64-linux = image (filter (host: host.category != "x86") hosts);
+      };
 
     };
 }

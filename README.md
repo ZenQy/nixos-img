@@ -25,3 +25,7 @@ nixos image for low ram vps
 
  - [lantian](https://lantian.pub/article/modify-computer/nixos-low-ram-vps.lantian/)
  - [qbisi](https://github.com/qbisi/nixos-images)
+
+## 问题
+
+`E20C`无法启动，仍在挠头中...
