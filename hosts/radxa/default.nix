@@ -21,9 +21,9 @@
       "mmc_block"
     ];
     kernelParams = [
-      "earlycon=on"
+      "earlycon"
       "console=serial"
-      "consoleargs=console=ttyS0,1500000"
+      "console=ttyS0,1500000"
     ];
     kernelPackages = pkgs.linuxPackages_latest;
   };
