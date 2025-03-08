@@ -4,7 +4,6 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     secrets = {
-      # url = "/home/nixos/Documents/nixos-secrets";
       url = "git+ssh://git@github.com/zenqy/nixos-secrets";
       flake = false;
     };
@@ -47,7 +46,7 @@
             modules = [
               disko.nixosModules.disko
               ./configuration.nix
-              # ./grow-partition.nix
+              ./grow-partition.nix
               ./hosts/${host.category}
               ./hosts/${host.category}/${host.name}
               {
