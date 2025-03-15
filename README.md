@@ -28,4 +28,4 @@ nixos image for low ram vps
 
 ## 问题
 
-`E20C`使用最新的test内核，可以启动，但在stage1无法正确挂载（waiting for device /dev/disk/by-partlabel/xxx to appear），继续挠头
+`E20C` EFI stub: Exiting boot services...

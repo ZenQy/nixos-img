@@ -14,11 +14,15 @@
     loader.grub.enable = false;
     loader.generic-extlinux-compatible.enable = true;
     loader.generic-extlinux-compatible.configurationLimit = 2;
-    # initrd.availableKernelModules = [ ];
+    initrd.availableKernelModules = [
+      "xhci_pci"
+      "usbhid"
+      "usb_storage"
+      "sata_nv"
+    ];
     kernelParams = [
       "console=ttyS0,1500000"
     ];
-    kernelPackages = pkgs.linuxKernel.packages.linux_testing;
   };
 
   disko.imageBuilder.extraPostVM =

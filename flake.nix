@@ -65,6 +65,7 @@
             value = self.nixosConfigurations.${host.name}.config.system.build.diskoImages;
           }) hosts
         );
+
     in
 
     {
@@ -72,7 +73,9 @@
       nixosConfigurations = nixos;
       packages = {
         x86_64-linux = image (filter (host: host.category == "x86") hosts);
+
         aarch64-linux = image (filter (host: host.category != "x86") hosts);
+
       };
 
     };

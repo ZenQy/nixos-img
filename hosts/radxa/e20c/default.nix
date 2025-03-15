@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   hardware.deviceTree = {
@@ -6,6 +6,15 @@
     name = "rockchip/rk3528-radxa-e20c.dtb";
     filter = "*e20c*.dtb";
   };
+
+  # nixpkgs.overlays = [
+  #   (final: super: {
+  #     makeModulesClosure = x: super.makeModulesClosure (x // { allowMissing = true; });
+  #   })
+  # ];
+
+  boot.kernelPackages = pkgs.linuxPackagesFor (pkgs.callPackage ../../../pkgs/linux-armbian { });
+  # boot.kernelPackages = pkgs.linuxPackages_testing;
 
   # systemd.network.networks = {
   #   eth0 = {
