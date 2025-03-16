@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   pkgs,
   ...
@@ -39,4 +40,5 @@
     "net.ifnames=0"
   ];
 
+  system.stateVersion = builtins.substring 0 5 config.system.nixos.version;
 }
