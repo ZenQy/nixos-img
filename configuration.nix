@@ -9,7 +9,7 @@
   nix.extraOptions = "experimental-features = nix-command flakes";
   services.openssh = {
     enable = true;
-    ports = [ 22 ];
+    ports = [ 2022 ];
     settings = {
       PasswordAuthentication = false;
       PermitRootLogin = lib.mkForce "prohibit-password";
@@ -32,9 +32,9 @@
   ];
 
   time.timeZone = "Asia/Shanghai";
-  programs.git.enable = true;
   environment.systemPackages = with pkgs; [
     fastfetch
+    wget
   ];
 
   boot.kernelParams = [
