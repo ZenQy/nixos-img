@@ -1,4 +1,5 @@
 # nixos-img
+
 nixos image for low ram vps
 
 ---
@@ -21,11 +22,7 @@ nixos image for low ram vps
 
 ---
 
-## 感激 
+## 感激
 
- - [lantian](https://lantian.pub/article/modify-computer/nixos-low-ram-vps.lantian/)
- - [qbisi](https://github.com/qbisi/nixos-images)
-
-## 问题
-
-`E20C` EFI stub: Exiting boot services...
+- [lantian](https://lantian.pub/article/modify-computer/nixos-low-ram-vps.lantian/)
+- [qbisi](https://github.com/qbisi/nixos-images)
