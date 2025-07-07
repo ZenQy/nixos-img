@@ -15,14 +15,18 @@
       imageBuilder = {
         kernelPackages = pkgs.linuxPackages;
         extraPostVM =
+          with builtins;
           let
             imageName = "${hostname}.raw";
             path = ./. + "/${hostname}/u-boot";
+            info = import path;
+            files = attrNames info;
+            cmd = map (
+              file:
+              " ${pkgs.coreutils}/bin/dd if=${path}/${file} of=$out/${imageName} seek=${toString info.${file}} conv=fsync,notrunc"
+            ) files;
           in
-          lib.mkAfter ''
-            ${pkgs.coreutils}/bin/dd if=${path}/idbloader.img of=$out/${imageName} seek=64 conv=fsync,notrunc
-            ${pkgs.coreutils}/bin/dd if=${path}/u-boot.itb of=$out/${imageName} seek=16384 conv=fsync,notrunc
-          '';
+          lib.mkAfter (concatStringsSep "\n" cmd);
       };
 
       devices.disk.main = {

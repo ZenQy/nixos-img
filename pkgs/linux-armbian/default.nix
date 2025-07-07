@@ -1,14 +1,15 @@
 {
+  fetchFromGitHub,
   linuxManualConfig,
   pkgs,
-  fetchFromGitHub,
   ...
 }:
 
+let
+  kernelBranch = "6.1";
+  kernelVersion = "6.1.75";
+in
 linuxManualConfig {
-  extraMeta.branch = "6.1";
-  version = "6.1.75-armbian";
-  modDirVersion = "6.1.75";
   src = fetchFromGitHub {
     owner = "armbian";
     repo = "linux-rockchip";
@@ -16,7 +17,11 @@ linuxManualConfig {
     hash = "sha256-ZqEKQyFeE0UXN+tY8uAGrKgi9mXEp6s5WGyjVuxmuyM=";
   };
 
-  configfile = ./rk35xx_config;
+  extraMeta.branch = kernelBranch;
+  version = "${kernelVersion}-armbian";
+  modDirVersion = kernelVersion;
+
+  configfile = ./config;
   allowImportFromDerivation = true;
 
   kernelPatches = with pkgs.kernelPatches; [
