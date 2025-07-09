@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   hardware.deviceTree = {
@@ -14,5 +14,4 @@
     networkConfig.DHCP = true;
   };
 
-  devices.disk.main.content.partitions.boot.start = lib.mkForce "180MiB";
 }

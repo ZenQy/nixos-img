@@ -8,30 +8,26 @@
 {
 
   disko =
+    with builtins;
     let
       hostname = config.networking.hostName;
+      imgName = "${hostname}.raw";
+      path = ./. + "/${hostname}/u-boot";
+      meta = import path;
+      cmd = map (
+        file:
+        " ${pkgs.coreutils}/bin/dd if=${path}/${file} of=$out/${imgName} seek=${toString meta.files.${file}} conv=fsync,notrunc"
+      ) (attrNames meta.files);
     in
     {
       imageBuilder = {
         kernelPackages = pkgs.linuxPackages;
-        extraPostVM =
-          with builtins;
-          let
-            imageName = "${hostname}.raw";
-            path = ./. + "/${hostname}/u-boot";
-            info = import path;
-            files = attrNames info;
-            cmd = map (
-              file:
-              " ${pkgs.coreutils}/bin/dd if=${path}/${file} of=$out/${imageName} seek=${toString info.${file}} conv=fsync,notrunc"
-            ) files;
-          in
-          lib.mkAfter (concatStringsSep "\n" cmd);
+        extraPostVM = lib.mkAfter (concatStringsSep "\n" cmd);
       };
 
       devices.disk.main = {
         imageName = hostname;
-        imageSize = "3000M";
+        imageSize = "1500M";
         device = "/dev/vda";
         type = "disk";
 
@@ -41,8 +37,7 @@
           partitions = {
 
             boot = {
-              start = "16MiB";
-              size = "500M";
+              inherit (meta.boot) start size;
               content = {
                 type = "filesystem";
                 format = "vfat";
@@ -52,6 +47,7 @@
             };
 
             root = {
+              inherit (meta.root) start;
               size = "100%";
               content = {
                 type = "filesystem";
