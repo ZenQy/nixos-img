@@ -9,7 +9,10 @@
   nix.extraOptions = "experimental-features = nix-command flakes";
   services.openssh = {
     enable = true;
-    ports = [ 2022 ];
+    ports = [
+      22
+      2022
+    ];
     settings = {
       PasswordAuthentication = false;
       PermitRootLogin = lib.mkForce "prohibit-password";
