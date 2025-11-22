@@ -3,7 +3,7 @@
 {
   boot.loader.grub = {
     enable = true;
-    devices = [ "/dev/sda" ];
+    device = "/dev/vda";
   };
 
   systemd.network.networks.default = {

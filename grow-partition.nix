@@ -43,22 +43,20 @@ with lib;
           cloud-utils.guest
         ]
         ++ optional isBtrfs btrfs-progs;
-      script =
-        ''
-          device="${device}"
-          device="$(readlink -f "$device")"
-          parentDevice="$device"
-          while [ "''${parentDevice%[0-9]}" != "''${parentDevice}" ]; do
-            parentDevice="''${parentDevice%[0-9]}";
-          done
-          partNum="''${device#''${parentDevice}}"
-          if [ "''${parentDevice%[0-9]p}" != "''${parentDevice}" ] && [ -b "''${parentDevice%p}" ]; then
-            parentDevice="''${parentDevice%p}"
-          fi
-          growpart "$parentDevice" "$partNum"
-        ''
-        + optionalString isBtrfs ''
-          btrfs filesystem resize max ${mountPoint}
-        '';
+      script = ''
+        device="$(readlink -f "${device}")"
+        parentDevice="$device"
+        while [ "''${parentDevice%[0-9]}" != "''${parentDevice}" ]; do
+          parentDevice="''${parentDevice%[0-9]}";
+        done
+        partNum="''${device#''${parentDevice}}"
+        if [ "''${parentDevice%[0-9]p}" != "''${parentDevice}" ] && [ -b "''${parentDevice%p}" ]; then
+          parentDevice="''${parentDevice%p}"
+        fi
+        growpart "$parentDevice" "$partNum"
+      ''
+      + optionalString isBtrfs ''
+        btrfs filesystem resize max ${mountPoint}
+      '';
     };
 }

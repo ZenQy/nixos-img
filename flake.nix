@@ -30,7 +30,8 @@
       hosts = concatMap (
         dir:
         map (subdir: {
-          category = dir;
+          system = if dir == "x86" || dir == "x86-uefi" then "x86_64-linux" else "aarch64-linux";
+          dir = dir;
           name = subdir;
         }) (floder ./hosts/${dir})
       ) (floder ./hosts);
@@ -39,7 +40,7 @@
         map (host: {
           name = host.name;
           value = nixpkgs.lib.nixosSystem {
-            system = if host.category == "x86" then "x86_64-linux" else "aarch64-linux";
+            system = host.system;
             specialArgs = {
               secrets = import (secrets + "/secrets.nix");
             };
@@ -47,8 +48,8 @@
               disko.nixosModules.disko
               ./configuration.nix
               ./grow-partition.nix
-              ./hosts/${host.category}
-              ./hosts/${host.category}/${host.name}
+              ./hosts/${host.dir}
+              ./hosts/${host.dir}/${host.name}
               {
                 networking.hostName = host.name;
               }
@@ -72,9 +73,9 @@
 
       nixosConfigurations = nixos;
       packages = {
-        x86_64-linux = image (filter (host: host.category == "x86") hosts);
+        x86_64-linux = image (filter (host: host.system == "x86_64-linux") hosts);
 
-        aarch64-linux = image (filter (host: host.category != "x86") hosts);
+        aarch64-linux = image (filter (host: host.system == "aarch64-linux") hosts);
 
       };
 

@@ -3,13 +3,13 @@
 {
   boot.loader.grub = {
     enable = true;
-    devices = [ "/dev/vda" ];
+    device = "/dev/vda";
   };
 
   systemd.network.networks.default = {
     name = "eth0";
     address = [
-      secrets.alice.ipv6.ip
+      secrets.hosts.alice.ipv6.ip
     ];
     routes = [
       {

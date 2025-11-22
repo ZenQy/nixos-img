@@ -7,7 +7,7 @@
     filter = "*e20c*.dtb";
   };
 
-  boot.kernelPackages = pkgs.linuxPackagesFor (pkgs.callPackage ../../../pkgs/linux-armbian { });
+  boot.kernelPackages = pkgs.linuxPackagesFor (pkgs.callPackage ../../../pkgs/linux-flippy { });
 
   systemd.network.networks = {
     eth0 = {
