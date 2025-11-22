@@ -3,7 +3,7 @@
 {
   disko.devices.disk.main = {
     imageName = config.networking.hostName;
-    imageSize = "1500M";
+    imageSize = "2000M";
     device = "/dev/vda";
     type = "disk";
 
