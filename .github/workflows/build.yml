@@ -66,15 +66,6 @@ jobs:
             trusted-public-keys = zenqy.cachix.org-1:G5csLBsu/kQIOXU7XUiqeMacwzN1WQWv0+GysTVmJgo= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
             substituters = https://zenqy.cachix.org/ https://cache.nixos.org/
 
-      - name: Magic Nix Cache
-        uses: DeterminateSystems/flakehub-cache-action@main
-
-      - name: Use Cachix
-        uses: cachix/cachix-action@v16
-        with:
-          name: zenqy
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-
       - name: Run Nix Flake Update
         run: nix flake update
 
@@ -96,25 +87,23 @@ jobs:
             sed -i 's|/dev/vda|/dev/sda|g' hosts/x86/vps/default.nix
           fi
 
-          echo '**********查看配置**********'
-          cat hosts/x86/vps/default.nix
-          echo '**********查看配置**********'
-
       - name: build image
         run: |
           echo "DATE=$(date +"%Y.%m.%d")" >> $GITHUB_ENV
           nix build .#vps
-          cp result/*.raw .
-          chmod 0644 *.raw
-          gzip *.raw
+          cp result/vps.raw ./vps.raw
+          chmod 0644 vps.raw
+          gzip vps.raw
+          echo "显示文件"
+          ls
 
-      - name: Upload OpenWrt To Release
+      - name: Upload Image To Release
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
           removeArtifacts: true
           tag: v${{ env.DATE }}
-          artifacts: "*.raw.gz"
+          artifacts: "vps.raw.gz,README.md"
           body: |
             Gateway:${{ env.GATEWAY }}
 
