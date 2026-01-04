@@ -85,21 +85,28 @@ jobs:
               sed -i '12d' hosts/x86/vps/default.nix
             done
             sed -i '12inetworkConfig.DHCP = true;' hosts/x86/vps/default.nix
+            echo "GATEWAY=auto" >> $GITHUB_ENV
           else
             sed -i 's|10.0.0.10/24|${{ inputs.address }}|g' hosts/x86/vps/default.nix
             sed -i 's|10.0.0.1|${{ inputs.gateway }}|g' hosts/x86/vps/default.nix
+            echo "GATEWAY=${{ inputs.gateway }}" >> $GITHUB_ENV
           fi
+
           if [[ ${{ inputs.device }} == 'sda' ]]; then
             sed -i 's|/dev/vda|/dev/sda|g' hosts/x86/vps/default.nix
           fi
-          echo '**********查看配置'**********'
+
+          echo '**********查看配置**********'
           cat hosts/x86/vps/default.nix
-          echo '**********查看配置'**********'
+          echo '**********查看配置**********'
 
       - name: build image
         run: |
           echo "DATE=$(date +"%Y.%m.%d")" >> $GITHUB_ENV
           nix build .#vps
+          ls result
+          cp result/*.raw .
+          gzip *.raw
 
       - name: Upload OpenWrt To Release
         uses: ncipollo/release-action@v1
@@ -107,10 +114,9 @@ jobs:
           allowUpdates: true
           removeArtifacts: true
           tag: v${{ env.DATE }}
-          token: ${{ github.token }}
-          artifacts: result/*.raw
+          artifacts: *.raw.gz
           body: |
-            Gateway:${{ inputs.gateway }}
+            Gateway:${{ env.GATEWAY }}
 
       - name: Remove old Releases
         uses: dev-drprasad/delete-older-releases@v0.3.4
