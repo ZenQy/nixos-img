@@ -104,8 +104,8 @@ jobs:
         run: |
           echo "DATE=$(date +"%Y.%m.%d")" >> $GITHUB_ENV
           nix build .#vps
-          ls result
           cp result/*.raw .
+          chmod 0644 *.raw
           gzip *.raw
 
       - name: Upload OpenWrt To Release
