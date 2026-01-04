@@ -94,8 +94,7 @@ jobs:
           cp result/vps.raw ./vps.raw
           chmod 0644 vps.raw
           gzip vps.raw
-          echo "显示文件"
-          ls
+          ls -lh
 
       - name: Upload Image To Release
         uses: ncipollo/release-action@v1
@@ -103,7 +102,7 @@ jobs:
           allowUpdates: true
           removeArtifacts: true
           tag: v${{ env.DATE }}
-          artifacts: "vps.raw.gz,README.md"
+          artifacts: "README.md"
           body: |
             Gateway:${{ env.GATEWAY }}
 
