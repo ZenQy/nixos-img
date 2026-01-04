@@ -114,7 +114,7 @@ jobs:
           allowUpdates: true
           removeArtifacts: true
           tag: v${{ env.DATE }}
-          artifacts: *.raw.gz
+          artifacts: "*.raw.gz"
           body: |
             Gateway:${{ env.GATEWAY }}
 
