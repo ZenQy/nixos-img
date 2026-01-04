@@ -3,10 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    secrets = {
-      url = "git+ssh://git@github.com/zenqy/nixos-secrets";
-      flake = false;
-    };
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -17,7 +13,6 @@
     {
       self,
       nixpkgs,
-      secrets,
       disko,
     }:
     with builtins;
@@ -41,9 +36,6 @@
           name = host.name;
           value = nixpkgs.lib.nixosSystem {
             system = host.system;
-            specialArgs = {
-              secrets = import (secrets + "/secrets.nix");
-            };
             modules = [
               disko.nixosModules.disko
               ./configuration.nix
