@@ -15,9 +15,8 @@ with lib;
 
   systemd.services.growpart =
     let
-      mountPoint = "/";
+      mountPoint = "/nix";
       device = config.fileSystems.${mountPoint}.device;
-      isBtrfs = config.fileSystems.${mountPoint}.fsType == "btrfs";
     in
     {
       enable = true;
@@ -37,12 +36,10 @@ with lib;
         # growpart returns 1 if the partition is already grown
         SuccessExitStatus = "0 1";
       };
-      path =
-        with pkgs;
-        [
-          cloud-utils.guest
-        ]
-        ++ optional isBtrfs btrfs-progs;
+      path = with pkgs; [
+        cloud-utils.guest
+        btrfs-progs
+      ];
       script = ''
         device="$(readlink -f "${device}")"
         parentDevice="$device"
@@ -54,8 +51,6 @@ with lib;
           parentDevice="''${parentDevice%p}"
         fi
         growpart "$parentDevice" "$partNum"
-      ''
-      + optionalString isBtrfs ''
         btrfs filesystem resize max ${mountPoint}
       '';
     };

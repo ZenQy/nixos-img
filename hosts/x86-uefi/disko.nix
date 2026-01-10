@@ -1,52 +1,70 @@
 { config, ... }:
 
 {
-  disko.devices.disk.main = {
-    imageName = config.networking.hostName;
-    imageSize = "2000M";
-    device = "/dev/vda";
-    type = "disk";
+  disko.devices = {
+    disk.main = {
+      imageName = config.networking.hostName;
+      imageSize = "2000M";
+      device = "/dev/vda";
+      type = "disk";
+      content = {
+        type = "gpt";
+        partitions = {
 
-    content = {
-      type = "gpt";
+          boot = {
+            type = "EF00";
+            size = "500M";
+            content = {
+              type = "filesystem";
+              format = "vfat";
+              mountpoint = "/boot";
+              mountOptions = [ "umask=0077" ];
+            };
+          };
 
-      partitions = {
+          swap = {
+            size = "500M";
+            content = {
+              type = "swap";
+            };
+          };
 
-        boot = {
-          type = "EF00";
-          size = "500M";
-          content = {
-            type = "filesystem";
-            format = "vfat";
-            mountpoint = "/boot";
-            mountOptions = [ "umask=0077" ];
+          root = {
+            size = "100%";
+            content = {
+              type = "btrfs";
+              extraArgs = [ "-f" ];
+              subvolumes = builtins.listToAttrs (
+                map
+                  (x: {
+                    name = x;
+                    value = {
+                      mountpoint = x;
+                      mountOptions = [
+                        "compress-force=zstd"
+                        "nosuid"
+                        "nodev"
+                      ];
+                    };
+                  })
+                  [
+                    "/nix"
+                  ]
+              );
+            };
           };
         };
-
-        # 交换区
-        swap = {
-          size = "500M";
-          content = {
-            type = "swap";
-          };
-          priority = 1;
-        };
-
-        root = {
-          size = "100%";
-          content = {
-            type = "filesystem";
-            format = "btrfs";
-            mountpoint = "/";
-            mountOptions = [
-              "compress-force=zstd"
-              "nosuid"
-              "nodev"
-            ];
-          };
-        };
-
       };
+    };
+
+    nodev."/" = {
+      fsType = "tmpfs";
+      mountOptions = [
+        "relatime"
+        "mode=755"
+        "nosuid"
+        "nodev"
+      ];
     };
   };
 }
