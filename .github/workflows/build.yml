@@ -5,7 +5,7 @@ on:
       address:
         description: "vps的ip地址，可设置为auto"
         required: true
-        default: "10.0.0.1/24"
+        default: "10.0.0.10/24"
         type: string
       gateway:
         description: "vps的网关"
@@ -78,8 +78,8 @@ jobs:
           if [[ $(git diff flake.lock | wc -l) > 0 ]]; then
             git config --global user.name 'github-actions[bot]'
             git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add falke.lock
-            git commit -m "Update falke.lock - Automated Commit"
+            git add flake.lock
+            git commit -m "Update flake.lock - Automated Commit"
             git push
           fi
 
