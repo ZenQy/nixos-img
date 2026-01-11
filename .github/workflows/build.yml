@@ -70,6 +70,19 @@ jobs:
       - name: Run Nix Flake Update
         run: nix flake update
 
+      - name: Commit and Push
+        run: |
+          echo '----------------'
+          ls
+          echo '----------------'
+          if [[ $(git diff flake.lock | wc -l) > 0 ]]; then
+            git config --global user.name 'github-actions[bot]'
+            git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add falke.lock
+            git commit -m "Update falke.lock - Automated Commit"
+            git push
+          fi
+
       - name: Set Config
         run: |
           if [[ ${{ inputs.address }} == 'auto' ]]; then
@@ -114,13 +127,3 @@ jobs:
           delete_tags: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
-
-      - name: Commit and Push
-        run: |
-          if [[ $(git diff flake.lock | wc -l) > 0 ]]; then
-            git config --global user.name 'github-actions[bot]'
-            git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add falke.lock
-            git commit -m "Update falke.lock - Automated Commit"
-            git push
-          fi
