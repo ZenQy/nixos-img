@@ -45,6 +45,7 @@
                   })
                   [
                     "/boot"
+                    "/home"
                     "/nix"
                     "/var"
                   ]
