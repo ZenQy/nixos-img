@@ -9,7 +9,11 @@
   boot.kernelPackages = pkgs.linuxPackagesFor (pkgs.callPackage ../../../pkgs/linux-flippy { });
   systemd.network.networks.default = {
     name = "eth0";
-    networkConfig.DHCP = true;
+    networkConfig = {
+      Address = "10.0.0.10/24";
+      Gateway = "10.0.0.1";
+      DHCP = "ipv6";
+    };
   };
 
 }
