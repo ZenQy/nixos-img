@@ -16,7 +16,7 @@
       meta = import dir;
       cmd = map (
         file:
-        " ${pkgs.coreutils}/bin/dd if=${dir}/${file} of=$out/${imgName} seek=${toString meta.files.${file}} conv=fsync,notrunc"
+        "${pkgs.coreutils}/bin/dd if=${dir}/${file} of=$out/${imgName} seek=${toString meta.files.${file}} conv=fsync,notrunc"
       ) (attrNames meta.files);
     in
     {
