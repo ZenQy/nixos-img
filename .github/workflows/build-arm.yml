@@ -15,7 +15,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-24.04-arm
-    if: ${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}
 
     steps:
       - name: Delete older workflow runs and artifacts
@@ -67,11 +66,16 @@ jobs:
             git push
           fi
 
-      - name: build image
+      - name: set config
         run: |
           echo "DATE=$(date +"%Y.%m%d.%H%M")" >> $GITHUB_ENV
+          sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.bak
+          cat /etc/nix/nix.conf.bak | sudo tee /etc/nix/nix.conf
           sed -i '/system-features/d' /etc/nix/nix.conf
           echo 'system-features = kvm' >> /etc/nix/nix.conf
+
+      - name: build image
+        run: |
           nix build .#${{ inputs.host }}
           cp result/${{ inputs.host }}.raw ./${{ inputs.host }}.raw
           chmod 0644 ${{ inputs.host }}.raw
