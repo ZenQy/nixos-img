@@ -52,6 +52,7 @@ jobs:
           extra_nix_config: |
             trusted-public-keys = zenqy.cachix.org-1:G5csLBsu/kQIOXU7XUiqeMacwzN1WQWv0+GysTVmJgo= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
             substituters = https://zenqy.cachix.org/ https://cache.nixos.org/
+            system-features = kvm
 
       - name: Run Nix Flake Update
         run: nix flake update
@@ -65,14 +66,6 @@ jobs:
             git commit -m "Update flake.lock - Automated Commit"
             git push
           fi
-
-      - name: set config
-        run: |
-          echo "DATE=$(date +"%Y.%m%d.%H%M")" >> $GITHUB_ENV
-          sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.bak
-          cat /etc/nix/nix.conf.bak | sudo tee /etc/nix/nix.conf
-          sed -i '/system-features/d' /etc/nix/nix.conf
-          echo 'system-features = kvm' >> /etc/nix/nix.conf
 
       - name: build image
         run: |
