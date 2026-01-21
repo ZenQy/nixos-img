@@ -1,25 +1,12 @@
-name: Build image files
+name: Build Arm image files
 on:
   workflow_dispatch:
     inputs:
-      address:
-        description: "vps的ip地址，可设置为auto"
+      host:
+        description: "填写需要编译的host"
         required: true
-        default: "10.0.0.10/24"
+        default: "e20c"
         type: string
-      gateway:
-        description: "vps的网关"
-        required: true
-        default: "10.0.0.1"
-        type: string
-      device:
-        type: choice
-        description: "硬盘类型，vda/sda"
-        options:
-          - vda
-          - sda
-        required: true
-        default: vda
 
 env:
   NIX_PATH: nixpkgs=channel:nixos-unstable
@@ -27,7 +14,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     if: ${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}
 
     steps:
@@ -80,31 +67,13 @@ jobs:
             git push
           fi
 
-      - name: Set Config
-        run: |
-          if [[ ${{ inputs.address }} == 'auto' ]]; then
-            for i in {1..9}; do
-              sed -i '12d' hosts/x86/vps/default.nix
-            done
-            sed -i '12inetworkConfig.DHCP = true;' hosts/x86/vps/default.nix
-            echo "GATEWAY=auto" >> $GITHUB_ENV
-          else
-            sed -i 's|10.0.0.10/24|${{ inputs.address }}|g' hosts/x86/vps/default.nix
-            sed -i 's|10.0.0.1|${{ inputs.gateway }}|g' hosts/x86/vps/default.nix
-            echo "GATEWAY=${{ inputs.gateway }}" >> $GITHUB_ENV
-          fi
-
-          if [[ ${{ inputs.device }} == 'sda' ]]; then
-            sed -i 's|/dev/vda|/dev/sda|g' hosts/x86/vps/default.nix
-          fi
-
       - name: build image
         run: |
           echo "DATE=$(date +"%Y.%m%d.%H%M")" >> $GITHUB_ENV
-          nix build .#vps
-          cp result/vps.raw ./vps.raw
-          chmod 0644 vps.raw
-          gzip vps.raw
+          nix build .#${{ inputs.host }}
+          cp result/${{ inputs.host }}.raw ./${{ inputs.host }}.raw
+          chmod 0644 ${{ inputs.host }}.raw
+          gzip ${{ inputs.host }}.raw
 
       - name: Upload Image To Release
         uses: ncipollo/release-action@v1
@@ -112,9 +81,9 @@ jobs:
           allowUpdates: true
           removeArtifacts: true
           tag: v${{ env.DATE }}
-          artifacts: "vps.raw.gz"
+          artifacts: "${{ inputs.host }}.raw.gz"
           body: |
-            Gateway:${{ env.GATEWAY }}
+            Device:${{ inputs.host }}
 
       - name: Remove old Releases
         uses: dev-drprasad/delete-older-releases@v0.3.4
