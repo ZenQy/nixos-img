@@ -70,6 +70,8 @@ jobs:
       - name: build image
         run: |
           echo "DATE=$(date +"%Y.%m%d.%H%M")" >> $GITHUB_ENV
+          sed -i '/system-features/d' /etc/nix/nix.conf
+          echo 'system-features = kvm' >> /etc/nix/nix.conf
           nix build .#${{ inputs.host }}
           cp result/${{ inputs.host }}.raw ./${{ inputs.host }}.raw
           chmod 0644 ${{ inputs.host }}.raw
