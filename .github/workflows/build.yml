@@ -92,7 +92,6 @@ jobs:
             sed -i 's|10.0.0.1|${{ inputs.gateway }}|g' hosts/x86/vps/default.nix
             echo "GATEWAY=${{ inputs.gateway }}" >> $GITHUB_ENV
           fi
-
           if [[ ${{ inputs.device }} == 'sda' ]]; then
             sed -i 's|/dev/vda|/dev/sda|g' hosts/x86/vps/default.nix
           fi
