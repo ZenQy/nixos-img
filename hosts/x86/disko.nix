@@ -17,14 +17,6 @@
             priority = 0;
           };
 
-          # swap = {
-          #   size = "500M";
-          #   content = {
-          #     type = "swap";
-          #   };
-          #   priority = 1;
-          # };
-
           root = {
             size = "100%";
             content = {
