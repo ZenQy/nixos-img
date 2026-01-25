@@ -4,7 +4,7 @@
   disko.devices = {
     disk.main = {
       imageName = config.networking.hostName;
-      imageSize = "1500M";
+      imageSize = "1200M";
       device = "/dev/vda";
       type = "disk";
       content = {
@@ -17,13 +17,13 @@
             priority = 0;
           };
 
-          swap = {
-            size = "500M";
-            content = {
-              type = "swap";
-            };
-            priority = 1;
-          };
+          # swap = {
+          #   size = "500M";
+          #   content = {
+          #     type = "swap";
+          #   };
+          #   priority = 1;
+          # };
 
           root = {
             size = "100%";
@@ -36,18 +36,28 @@
                     name = x;
                     value = {
                       mountpoint = x;
-                      mountOptions = [
-                        "compress-force=zstd"
-                        "nosuid"
-                        "nodev"
-                      ];
-                    };
+                    }
+                    // (
+                      if x == "/swap" then
+                        {
+                          swap.swapfile.size = "100M";
+                        }
+                      else
+                        {
+                          mountOptions = [
+                            "compress-force=zstd"
+                            "nosuid"
+                            "nodev"
+                          ];
+                        }
+                    );
                   })
                   [
                     "/boot"
                     "/home"
                     "/nix"
                     "/var"
+                    "/swap"
                   ]
               );
             };

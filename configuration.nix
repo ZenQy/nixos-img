@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 
@@ -24,6 +23,8 @@
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBCm/fzBKSSrwR8taYQURb/0p21tBpk6QCL9JviqUOvj zenith@linux"
     ];
   };
+  environment.etc."ssh/ssh_host_ed25519_key.pub".text =
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ45CA7BpSSt3qrC64G4/uZsSzH8Fzi5bZW30EOaN2Y8 root@nixos-img";
 
   networking.firewall.enable = false;
   networking.useDHCP = false;
@@ -35,10 +36,6 @@
   ];
 
   time.timeZone = "Asia/Shanghai";
-  environment.systemPackages = with pkgs; [
-    fastfetch
-    wget
-  ];
 
   boot.kernelParams = [
     "audit=0"
