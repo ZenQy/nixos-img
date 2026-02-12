@@ -7,15 +7,15 @@
 
 let
   kernelBranch = "6.12";
-  kernelVersion = "6.12.65";
+  kernelVersion = "6.12.69";
 in
 linuxManualConfig {
   src = fetchFromGitHub {
     owner = "unifreq";
     repo = "linux-6.12.y";
-    rev = "a67d28153b2c39afab74fcb8fa5b192cbb14fa6d";
+    rev = "cf31448c797d9aa8304b9f821d957582cfbec386";
     fetchSubmodules = false;
-    sha256 = "sha256-jH/A74lWZG79easgceyE6wxugrHsIsLfQOdAKLa0HK4=";
+    sha256 = "sha256-fUu91hQpf28nGrFIfMNjxPEavANky4TgOSSRnoGr8JE=";
   };
 
   extraMeta.branch = kernelBranch;

@@ -31,8 +31,8 @@
   systemd.network.enable = true;
   services.resolved.enable = false;
   networking.nameservers = [
-    "1.1.1.1"
     "2606:4700:4700::1111"
+    "1.1.1.1"
   ];
 
   time.timeZone = "Asia/Shanghai";
